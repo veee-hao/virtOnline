@@ -1,0 +1,15 @@
+<table width=99% height=99% border=2px cellpadding=1px cellspacing=1px>
+<tr>
+<td style="border-right:2px solid #111111;width:300px;height:600px;vertical-align:top">
+<?php
+require("html/nav.php");
+?>
+</td>
+<td style="border-left:2px solid #111111;">
+<?php
+require("show.php");
+?>
+</td>
+</tr>
+</table>
+

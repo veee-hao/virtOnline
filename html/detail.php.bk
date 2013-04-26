@@ -1,0 +1,54 @@
+<table class="detail">
+<thead >
+<tr>
+        <td style="height:20px;width:20px">
+        <?php
+        if ($dm->state != VIR_DOMAIN_RUNNING) {
+            echo ('<a href="index.php?dname='.$dname.'&oper=start"><img src="images/start.png" width=20px height=20px></a>');
+        } else {
+            echo ('<img src="images/start-grey.png" width=20px height=20px>');
+        }
+        ?>
+        </td>
+        <td style="height:20px;width:20px">
+        <?php
+        if ($dm->state == VIR_DOMAIN_RUNNING) {
+            echo ('<a href="index.php?dname='.$dname.'&oper=start"><img src="images/pause.png" width=20px height=20px></a>');
+        } else {
+            echo ('<img src="images/pause-grey.png" width=20px height=20px>');
+        }
+        ?>
+        </td>
+        <td style="height:20px;width:20px">
+        <?php
+        if ($dm->state == VIR_DOMAIN_RUNNING) {
+            echo ('<a href="index.php?dname='.$dname.'&oper=start"><img src="images/shutdown.png" width=20px height=20px></a>');
+        } else {
+            echo ('<img src="images/shutdown-grey.png" width=20px height=20px>');
+        }
+        ?>
+        </td>
+        <td style="height:20px;width:20px">
+        <?php
+        if ($dm->state == VIR_DOMAIN_RUNNING) {
+            echo ('<a href="index.php?dname='.$dname.'&oper=start"><img src="images/reset.png" width=20px height=20px></a>');
+        } else {
+            echo ('<img src="images/reset-grey.png" width=20px height=20px>');
+        }
+        ?>
+	</td>
+	<td>&nbsp</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+        <td>CPU</td>
+        <td>4</td>
+</tr>
+<tr>
+        <td>ccc</td>
+        <td>888</td>
+</tr>
+<tr><td>&nbsp</td></tr>
+</tbody>
+</table>

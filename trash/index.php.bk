@@ -1,0 +1,9 @@
+<?php
+    include "connect.php"	
+    
+    //phpinfo();
+    require("html/header.php");
+    require("html/body.php");
+    require("html/footer.php");
+?>
+

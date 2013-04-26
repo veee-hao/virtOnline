@@ -1,0 +1,42 @@
+<?php
+$dname="";
+$oper="";
+if ( isset($_REQUEST['dname']) && $dname != $_REQUEST['dname'] ) {
+	$dname = $_REQUEST['dname'];
+	$dm = $df->retriveDomain($dname);
+}
+if ( isset($_REQUEST['oper']) ) {
+	$oper = $_REQUEST['oper'];
+}
+if ( !empty($oper) ) {
+    switch ($oper)
+    {
+        case 'start':
+	    if ($dm->state == VIR_DOMAIN_PAUSED ) { 
+		$ret = $dm->resumeDomain();
+	    } else {
+                $ret = $dm->startDomain();
+	    }
+            header("Location: index.php?dname=".$dname);
+	    break; 
+        case 'pause':
+            $ret = $dm->suspendDomain();
+            header("Location: index.php?dname=$dname");
+	    break; 
+        case 'shutdown':
+            $ret = $dm->shutdownDomain();
+            header("Location: index.php?dname=$dname");
+	    break; 
+        case 'reset':
+            $ret = $dm->rebootDomain();
+            header("Location: index.php?dname=$dname");
+	    break; 
+    }
+    $oper = "";
+}
+if ( empty($dname) ) {
+	require("html/host.php");
+} else {
+	require("html/dom-detail.php");
+}
+?>

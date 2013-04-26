@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Virt-Online</title>
+<style type="text/css">
+<!--
+body {
+        font-size: 12px;
+        text-decoration: none;
+        text-align: left;
+        height: 500px;
+	width: 1400px;
+	padding: 2px;
+        margin-left: 0px;
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-bottom: 0px;
+}
+table.list {
+	border-left:2px solid #585858;
+	border-right:2px solid #585858;
+	width: 99%;
+}
+table.list th
+{
+        text-align: center;
+        background-color: #dcdcdc;
+        padding: 1px;
+        color: #111111;
+}
+
+table.list td
+{
+        padding: 2px;
+    	background-color: #ffffff;
+}
+
+table.list tr
+{
+    text-align:center;
+    background-color: #ffffff;
+}
+table.list tr           { background-color: #ddd; }
+table.list tr:hover     { background-color: #bbb; }
+table.list tr.diff      { background-color: #faa; }
+table.list tr.diff:hover        { background-color: #f88; }
+table.list tr.search_result     { background-color: #fd8; }
+table.list tr.search_result:hover       { background-color: #fb6; }
+table.list tr.crashed_job       { color: #f00; }
+table.list tr.small th { background-color:#aaa; }
+table.list tr.small:hover th { background-color:#888; }
+table.list tr.disabled th { background-color:#00a; }
+table.list tr.disabled:hover th { background-color:#008; }
+tr.small, tr.small input, tr.small select { font-size:80%; }
+tr.disabled, tr.disabled input, tr.disabled select { font-size:50%; }
+tr.small { color: #666; }
+.head {
+        font-size: 15px;
+        color: #FFFFCA;
+        text-decoration: none;
+	text-align: left;
+	text-vertical-align: middle;
+        height: 30px;
+        width: 99%;
+        border: 1px solid #666666;
+        background-color: #000080;
+        line-height: 20px;
+	vertical-align: bottom;
+}
+table.detail {width:100%;border:1px solid #000;height:100%;}
+table.detail thead {vertical-align:middle;height:20px;}
+-->
+</style>
+<script language="javascript">
+function jsfun()
+{
+   document.getElementById("ChildUL").style.display=(document.getElementById("ChildUL").style.display=='none')?'block':'none';
+}
+</script>
+</head>
+<body>
+<div class="head" ><B>&nbsp&nbsp Welcome to Virt-Online!</B></div>
+
