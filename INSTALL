@@ -1,0 +1,15 @@
+###################
+# Install dependency
+###################
+* apache
+* php
+* libvirt-php
+* Java Run time
+#####################
+# Install steps
+#####################
+1.decompress libvirt-php source & install it.
+2.install all depended pkgs.
+3.copy all files to apache wwwroot directory.
+
+
