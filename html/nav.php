@@ -2,9 +2,10 @@
 //include "domain/DomainFactory.php";
 require("include/conn.php");
 $domains = $df->getDomains();
-if (isset($_GET['newvm']))
+if (isset($_GET['createvm']))
 {
-	$df->createDomain();
+	require("include/newvm.php");
+	//$df->createDomain();
 }
 ?>
           <div class="span4">

@@ -26,7 +26,7 @@ if ( isset($_GET['oper']) && !empty($_GET['oper']) ) {
             $ret = $dm->rebootDomain();
             break;
         case 'delete':
-            $ret = $df->destoryDomain($dm);
+            $ret = $df->destoryDomain($dname);
             break;
 //        case 'conn':
 //            $_SESSION["connected"]="";
@@ -34,11 +34,22 @@ if ( isset($_GET['oper']) && !empty($_GET['oper']) ) {
 //	    exit;
 //            break;
     }
-if ( isset($_SESSION['vnc']) ) {
-    header("location:index.php?dname=$dname&vnc=true");
-} else {
-    header("location:index.php?dname=$dname");
-}
+    if ( !$ret ) {
+	echo "$oper $dname failed";
+    }
+    if ( isset($_SESSION['vnc']) ) {
+        if ( $oper == 'delete' ) {
+            header("location:index.php");
+	} else {
+	    header("location:index.php?dname=$dname&vnc=true");
+    	}
+    } else {
+        if ( $oper == 'delete' ) {
+	    header("location:index.php");
+	} else {
+            header("location:index.php?dname=$dname");
+	}
+    }
     exit;
 }
 ?>

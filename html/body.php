@@ -1,6 +1,11 @@
 <?php
+include("lib/Host.php");
+include "domain/DomainFactory.php";
 if ( !isset($_SESSION['connected']) || empty($_SESSION['connected']) || isset($_GET['reconn']) ) {
 	require("html/connect.php");
+} else if ( isset($_REQUEST['newvm']) && !isset($_REQUEST['createvm']) ) {
+	require("include/conn.php");
+	require("html/newvm.php");
 } else {
 ?>
 <div class="container-narrow">
@@ -11,8 +16,8 @@ $dname="";
 if ( isset($_REQUEST['dname']) && $dname != $_REQUEST['dname'] ) {
         $dname = $_REQUEST['dname'];
 }
-	include("lib/Host.php");
-	include "domain/DomainFactory.php";
+//	include("lib/Host.php");
+//	include "domain/DomainFactory.php";
 	require("include/action.php");
 	require("nav.php");
 	require("show.php");

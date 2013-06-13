@@ -1,6 +1,7 @@
 <?php
 
 include "Domain.php";
+include "xml.php";
 
     class DomainFactory
     {
@@ -95,108 +96,78 @@ include "Domain.php";
             $res = libvirt_domain_lookup_by_name($this->_conn, $name);
             if (isset($res))
             {
-               return libvirt_domain_destroy($res); 
-            }
+		$info = libvirt_domain_get_info($res);
+		if ($info['state'] == VIR_DOMAIN_RUNNING ) {
+            		$ret = libvirt_domain_destroy($res);
+			if (!$ret ) { 
+				echo "destroy domain failed.";
+				return false;
+			}
+		}
+	        return libvirt_domain_undefine($res);
+            } else {
+		return false;
+	    }
         }
-	function genXML()
-	{
-/*
-	    $xml = "<domain type=$inst['domain_type']>\n";
-	    $xml .= "<name>$inst['name']</name>\n";
-	    $xml .= "<memory>$inst['ram']</memory>\n";
-	    $xml .= "<currentMemory>$inst['ram']</currentMemory>\n";
-	    $xml .= "<vcpu>$inst['vcpu']</vcpu>";
-*/	    $xml = <<<EOF
- <domain type='kvm' id='67'>
-   <name>vmOnline-autoinstall</name>
-   <uuid>5f8aef11-cdb0-d634-3872-4bdf303cb648</uuid>
-   <memory>524288</memory>
-   <currentMemory>524288</currentMemory>
-   <vcpu>4</vcpu>
-  <os>
-    <type arch='x86_64' machine='pc-0.15'>hvm</type>
-    <kernel>/tmp/kernel</kernel>
-    <initrd>/tmp/install-initrd</initrd>
-    <cmdline> install=http://147.2.207.240/repo/sles-11-sp2-x86_64 </cmdline>
-    <boot dev='cdrom'/>
-  </os>
-  <features>
-    <acpi/>
-    <apic/>
-    <pae/>
-  </features>
-  <clock offset='utc'/>
-  <on_poweroff>destroy</on_poweroff>
-  <on_reboot>destroy</on_reboot>
-  <on_crash>destroy</on_crash>
-  <devices>
-    <emulator>/usr/bin/qemu-kvm</emulator>
-    <disk type='file' device='disk'>
-      <driver name='qemu' type='raw'/>
-      <source file='/var/lib/libvirt/images/vmOnline-autoinstall.raw'/>
-      <target dev='vda' bus='virtio'/>
-      <alias name='virtio-disk0'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
-    </disk>
-    <interface type='bridge'>
-      <mac address='52:54:00:5c:aa:59'/>
-      <source bridge='br0'/>
-      <target dev='vnet3'/>
-      <model type='virtio'/>
-      <alias name='net0'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0'/>
-    </interface>
-    <input type='mouse' bus='ps2'/>
-    <graphics type='vnc' port='5900' autoport='yes'/>
-    <video>
-      <model type='cirrus' vram='9216' heads='1'/>
-      <alias name='video0'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x0'/>
-    </video>
-    <memballoon model='virtio'>
-      <alias name='balloon0'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x06' function='0x0'/>
-    </memballoon>
-  </devices>
-</domain>
-EOF;
-	return $xml;
+	function getNetwork() {
+		if ( !$this->_conn ) {
+			echo "please setup connection";
+			return null;
+		} else {
+			return libvirt_list_networks($this->_conn, VIR_NETWORKS_ALL);
+		}
 	}
-	public function storage_CreateXML()
+	function genXML($repo,$linux,$initrd,$vm_name,$autoyast)
 	{
-		$xml = <<<EOF
-<volume>
-  <name>vmOnline-autoinstall.raw</name>
-  <key>/var/lib/libvirt/images/vmOnline-autoinstall.raw</key>
-  <source>
-  </source>
-  <capacity>8589934592</capacity>
-  <allocation>143360</allocation>
-  <target>
-    <path>/var/lib/libvirt/images/vmOnline-autoinstall.raw</path>
-    <format type='raw'/>
-    <permissions>
-      <mode>0600</mode>
-      <owner>0</owner>
-      <group>0</group>
-    </permissions>
-  </target>
-</volume>
-EOF;
-		$res=libvirt_storagepool_lookup_by_name($this->_conn,"default");
+		$xml = DOM_XML;
+		if ( !empty($autoyast) ) {
+			$autoyast = "autoyast=".$autoyast;
+		}
+		$pattern = array("/INSTALL-LINUX/","/INSTALL-INITRD/","/INSTALL-REPO/","/INSTALL-NAME/","/INSTALL-YAST/");
+		$replace = array($linux,$initrd,$repo,$vm_name,$autoyast);
+		$xml = preg_replace($pattern,$replace,$xml);
+		return $xml;
+	}
+	function storage_CreateXML($vm_name)
+	{
+		$xml = VM_DISK; 
+		$xml = preg_replace("/INSTALL-NAME/",$vm_name,$xml);
+		$res = libvirt_storagepool_lookup_by_name($this->_conn,"default");
+		$ret = libvirt_storagepool_set_autostart($res,true);
 		$vol = libvirt_storagevolume_create_xml($res, $xml);
+		$uuid = libvirt_storagepool_get_uuid_string($res);
+		return $uuid;
 	}
-        function createDomain()
+        function createDomain($repo,$linux,$initrd,$vname,$autoyast)
         {
-		$xml = $this->genXML();
+		$uuid = $this->storage_CreateXML($vname);	
+		$xml = $this->genXML($repo,$linux,$initrd,$vname,$autoyast);
 		$res = libvirt_domain_define_xml($this->_conn,$xml);
-		$this->storage_CreateXML();	
-		$ret = libvirt_domain_create($res);	
         	$ret = libvirt_domain_set_autostart($res, true);
+		$ret = libvirt_domain_create($res);	
 		if ( $ret ) {
 			echo "starting creating...";
+			libvirt_domain_change_boot_devices($res,"hd","cdrom");
+			$pid = pcntl_fork();
+			if ( $pid == -1 ) {
+				echo "can not start fork";
+			} else if ( $pid ) {
+				
+			} else {
+				$info = libvirt_domain_get_info($res);
+				while ($info['state'] == VIR_DOMAIN_RUNNING ) {
+					sleep(3);
+					$info = libvirt_domain_get_info($res);
+				}
+				$ret = libvirt_domain_create($res);
+				if ( !$ret ) {
+					echo "can not restart";
+				}
+			}
+			return true;	
 		} else {
 			echo "Cannot start new vm";
+			return false;
 		}
 	}
     }

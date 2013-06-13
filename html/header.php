@@ -49,7 +49,7 @@
             {% endif %}
 -->
             <li class="">
-              <a href="reconn.php"><b>Connect</b></a>
+              <a href="include/reconn.php"><b>Connect</b></a>
             </li>
           </ul>
         </div><!--/.container -->
